@@ -73,13 +73,8 @@ UKF::UKF() {
   lambda_ = 3 - n_aug_;
   const int n_sigma = 2*n_aug_ + 1;
 
-  // covariance matrix - initial value estimates
+  // covariance matrix
   P_ = MatrixXd(N_X, N_X);
-  P_.fill(0.0);
-  P_(0, 0) = P_(1, 1) = 0.05;   // 0.3 m std dev
-  P_(2, 2) = 0.5;               // 0.7 m/s std dev = 1.56 mph
-  P_(3, 3) = 0.016;             // 0.126 rad std dev - 7.25 degrees
-  P_(4, 4) = 0.005;             // 0.0.7 rad/s std dev - 4 degrees/s
 
   // sigma points matrix
   Xsig_pred_ = MatrixXd(n_x_, n_sigma);
@@ -138,6 +133,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       double yaw = 0.0;
       double yawd = 0.0;
       x_ << px, py, v, yaw, yawd;
+
+      // covariance matrix - initial value estimates
+      P_.fill(0.0);
+      P_(0, 0) = std_laspx_*std_laspx_;
+      P_(1, 1) = std_laspy_*std_laspx_;
+      P_(2, 2) = 0.5;               // 0.7 m/s std dev = 1.56 mph
+      P_(3, 3) = 0.016;             // 0.126 rad std dev - 7.25 degrees
+      P_(4, 4) = 0.005;             // 0.0.7 rad/s std dev - 4 degrees/s
     }
     else {
       assert(meas_package.sensor_type_ == MeasurementPackage::RADAR);
@@ -154,6 +157,13 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       double yaw = 0.0;
       double yawd = 0.0;
       x_ << px, py, v, yaw, yawd;
+
+      // covariance matrix - initial value estimates
+      P_.fill(0.0);
+      P_(0, 0) = P_(1, 1) = std_radr_*std_radr_;
+      P_(2, 2) = std_radrd_*std_radrd_;
+      P_(3, 3) = 0.016;             // 0.126 rad std dev - 7.25 degrees
+      P_(4, 4) = 0.005;             // 0.0.7 rad/s std dev - 4 degrees/s
     }
 
     is_initialized_ = true;
