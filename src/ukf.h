@@ -34,6 +34,9 @@ public:
   ///* time when the state is true, in us
   long long time_us_;
 
+  ///* elapsed time from first measurement
+  double elapsed_time_;
+
   ///* Process noise standard deviation longitudinal acceleration in m/s^2
   double std_a_;
 
@@ -66,6 +69,15 @@ public:
 
   ///* Sigma point spreading parameter
   double lambda_;
+
+  ///* measurement noise covariance matrices
+  MatrixXd R_radar_;
+  MatrixXd R_laser_;
+
+  ///* log file for NIS computation
+  std::ofstream radar_nis_;
+  std::ofstream lidar_nis_;
+
 
 
   /**
